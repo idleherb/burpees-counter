@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burpees Counter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Burpees Counter</h1>
+
+        <div class="setup" id="setup">
+            <div class="input-group">
+                <label for="duration">Duration (minutes):</label>
+                <input type="number" id="duration" min="1" value="20">
+            </div>
+
+            <div class="input-group">
+                <label for="burpees">Number of burpees:</label>
+                <input type="number" id="burpees" min="1" value="100">
+            </div>
+
+            <div class="input-group">
+                <label for="burpeeType">Burpee type:</label>
+                <select id="burpeeType">
+                    <option value="6">Standard Military Burpees (6 steps)</option>
+                    <option value="10">Navy Seal Burpees (10 steps)</option>
+                </select>
+            </div>
+
+            <button id="startBtn">Start Workout</button>
+        </div>
+
+        <div class="workout hidden" id="workout">
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Total time:</span>
+                    <span id="totalTime" class="stat-value">--:--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Time per burpee:</span>
+                    <span id="timePerBurpee" class="stat-value">--s</span>
+                </div>
+            </div>
+
+            <div class="progress">
+                <span id="currentBurpee" class="current">0</span>
+                <span class="separator">/</span>
+                <span id="totalBurpees" class="total">0</span>
+            </div>
+
+            <div class="timer">
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <div class="timer-label">Time remaining for this burpee</div>
+            </div>
+
+            <div class="controls">
+                <button id="soundBtn" class="btn-sound">Sound: ON</button>
+                <button id="resetBtn" class="btn-reset">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
