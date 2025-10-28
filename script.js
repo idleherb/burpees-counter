@@ -317,8 +317,18 @@ class BurpeesCounter {
     updateDisplay() {
         this.currentBurpeeDisplay.textContent = this.currentBurpee;
         this.totalBurpeesDisplay.textContent = this.totalBurpees;
-        this.currentStepDisplay.textContent = `${this.displayedStep}/${this.stepsPerBurpee}`;
+        this.updateStepDisplay();
         this.updateCountdown();
+    }
+
+    updateStepDisplay() {
+        const currentStepStr = this.displayedStep < 10
+            ? `<span class="invisible-zero">0</span>${this.displayedStep}`
+            : this.displayedStep.toString();
+        const totalStepsStr = this.stepsPerBurpee < 10
+            ? `<span class="invisible-zero">0</span>${this.stepsPerBurpee}`
+            : this.stepsPerBurpee.toString();
+        this.currentStepDisplay.innerHTML = `${currentStepStr}/${totalStepsStr}`;
     }
 
     getImageStepForCurrentStep() {
@@ -377,7 +387,7 @@ class BurpeesCounter {
         // Update step counter display at 75% of transition
         if (progress >= 0.75 && this.displayedStep !== this.currentStep) {
             this.displayedStep = this.currentStep;
-            this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
+            this.updateStepDisplay();
         }
 
         if (progress >= 1) {
