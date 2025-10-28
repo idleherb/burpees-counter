@@ -315,10 +315,25 @@ class BurpeesCounter {
     }
 
     updateDisplay() {
-        this.currentBurpeeDisplay.textContent = this.currentBurpee;
-        this.totalBurpeesDisplay.textContent = this.totalBurpees;
+        this.updateBurpeeDisplay();
         this.updateStepDisplay();
         this.updateCountdown();
+    }
+
+    updateBurpeeDisplay() {
+        // Determine how many digits the total has
+        const totalDigits = this.totalBurpees.toString().length;
+        const currentDigits = this.currentBurpee.toString().length;
+        const paddingNeeded = totalDigits - currentDigits;
+
+        let currentBurpeeStr = this.currentBurpee.toString();
+        if (paddingNeeded > 0) {
+            const padding = '<span class="invisible-zero">0</span>'.repeat(paddingNeeded);
+            currentBurpeeStr = padding + currentBurpeeStr;
+        }
+
+        this.currentBurpeeDisplay.innerHTML = currentBurpeeStr;
+        this.totalBurpeesDisplay.textContent = this.totalBurpees;
     }
 
     updateStepDisplay() {
