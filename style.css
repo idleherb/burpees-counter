@@ -175,12 +175,11 @@ button {
 .progress {
     font-size: 4rem;
     font-weight: 700;
-    color: #333;
+    color: #666;
     line-height: 1;
 }
 
 .progress .separator {
-    color: #ccc;
     margin: 0 10px;
 }
 
@@ -191,7 +190,7 @@ button {
 .total-time {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #777;
+    color: #666;
     font-variant-numeric: tabular-nums;
 }
 
