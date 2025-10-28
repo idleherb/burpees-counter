@@ -311,6 +311,18 @@ button {
     z-index: 2;
 }
 
+.detail-stat.rest {
+    background: #e8f5e9;
+}
+
+.detail-stat.rest .detail-label {
+    color: #4caf50;
+}
+
+.detail-stat.rest .detail-value {
+    color: #4caf50;
+}
+
 
 .btn-icon {
     display: flex;

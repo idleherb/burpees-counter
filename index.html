@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Burpees Counter</title>
-    <link rel="stylesheet" href="style.css?v=20250128006">
+    <link rel="stylesheet" href="style.css?v=20250128009">
 </head>
 <body>
     <div class="container">
@@ -36,12 +36,12 @@
 
             <div class="input-group">
                 <label for="timePerBurpeeInput">Time per burpee (seconds, optional)</label>
-                <input type="number" id="timePerBurpeeInput" min="1" max="300" value="" placeholder="Auto">
+                <input type="number" id="timePerBurpeeInput" min="3" max="30" value="" placeholder="Auto">
             </div>
 
             <div class="input-group">
                 <label for="preTimer">Prep time (seconds)</label>
-                <input type="number" id="preTimer" min="0" value="0">
+                <input type="number" id="preTimer" min="0" value="2">
             </div>
 
             <div id="workoutInfo" class="workout-info hidden"></div>
@@ -87,8 +87,8 @@
                     <span class="detail-label">Step</span>
                     <span id="currentStep" class="detail-value">0/0</span>
                 </div>
-                <div class="detail-stat">
-                    <span class="detail-label">Burpee time</span>
+                <div class="detail-stat" id="timePerBurpeeStat">
+                    <span class="detail-label" id="timePerBurpeeLabel">Burpee time</span>
                     <span id="timePerBurpee" class="detail-value">--s</span>
                 </div>
 
@@ -119,6 +119,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=20250128003"></script>
+    <script src="script.js?v=20250128006"></script>
 </body>
 </html>

@@ -85,6 +85,8 @@ class BurpeesCounter {
         this.currentBurpeeDisplay = document.getElementById('currentBurpee');
         this.totalBurpeesDisplay = document.getElementById('totalBurpees');
         this.currentStepDisplay = document.getElementById('currentStep');
+        this.timePerBurpeeLabel = document.getElementById('timePerBurpeeLabel');
+        this.timePerBurpeeStat = document.getElementById('timePerBurpeeStat');
         this.burpeeStepImage1 = document.getElementById('burpeeStepImage1');
         this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
         this.globalSoundBtn = document.getElementById('globalSoundBtn');
@@ -119,13 +121,34 @@ class BurpeesCounter {
         // Update workout info when inputs change
         this.durationInput.addEventListener('input', () => this.updateWorkoutInfo());
         this.burpeesInput.addEventListener('input', () => this.updateWorkoutInfo());
+        this.burpeeTypeSelect.addEventListener('change', () => {
+            this.updateMinBurpeeTime();
+            this.updateWorkoutInfo();
+        });
         this.timePerBurpeeInput.addEventListener('input', () => this.updateWorkoutInfo());
+
+        // Set initial min value and show workout info on page load
+        this.updateMinBurpeeTime();
+        this.updateWorkoutInfo();
+    }
+
+    updateMinBurpeeTime() {
+        const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
+        const minTime = stepsPerBurpee === 6 ? 3 : 5; // 3s for military, 5s for navy seal
+        this.timePerBurpeeInput.min = minTime;
+
+        // Clear value if it's below the new minimum
+        const currentValue = parseFloat(this.timePerBurpeeInput.value);
+        if (currentValue > 0 && currentValue < minTime) {
+            this.timePerBurpeeInput.value = '';
+        }
     }
 
     updateWorkoutInfo() {
         const durationMinutes = parseInt(this.durationInput.value) || 0;
         const burpees = parseInt(this.burpeesInput.value) || 0;
         const customTimePerBurpee = parseFloat(this.timePerBurpeeInput.value) || 0;
+        const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
 
         if (durationMinutes <= 0 || burpees <= 0) {
             this.workoutInfo.classList.add('hidden');
@@ -142,17 +165,22 @@ class BurpeesCounter {
                 this.workoutInfo.classList.remove('hidden');
                 this.workoutInfo.classList.add('error');
                 const shortfall = (customTimePerBurpee - timePerBurpeeCycle).toFixed(1);
-                this.workoutInfo.textContent = `⚠️ Not enough time: need ${shortfall}s more per burpee`;
+                this.workoutInfo.textContent = `Not enough time: need ${shortfall}s more per burpee`;
             } else {
-                // Valid: show burpee time and rest time per burpee
+                // Valid: show both burpee time and rest time
                 this.workoutInfo.classList.remove('hidden', 'error');
                 const restPerBurpee = (timePerBurpeeCycle - customTimePerBurpee).toFixed(1);
-                this.workoutInfo.textContent = `⏱️ ${customTimePerBurpee}s per burpee | 😌 ${restPerBurpee}s rest per burpee`;
+                this.workoutInfo.textContent = `Burpee: ${customTimePerBurpee}s | Rest: ${restPerBurpee}s`;
             }
         } else {
-            // Auto mode: show time per burpee with 0 rest
+            // Auto mode: time is divided into steps + 1 rest period
+            // Active burpee is steps 1 through (n-1), last step is rest
+            const intervalTime = timePerBurpeeCycle / (stepsPerBurpee + 1);
+            const burpeeTime = intervalTime * (stepsPerBurpee - 1);
+            const restTime = intervalTime * 2; // Last step + rest period
+
             this.workoutInfo.classList.remove('hidden', 'error');
-            this.workoutInfo.textContent = `⏱️ ${timePerBurpeeCycle.toFixed(1)}s per burpee | 😌 0s rest per burpee`;
+            this.workoutInfo.textContent = `Burpee: ${burpeeTime.toFixed(1)}s | Rest: ${restTime.toFixed(1)}s`;
         }
     }
 
@@ -240,6 +268,12 @@ class BurpeesCounter {
 
         // Validate custom time per burpee if specified
         if (customTimePerBurpee > 0) {
+            const minTime = stepsPerBurpee === 6 ? 3 : 5;
+            if (customTimePerBurpee < minTime) {
+                alert(`Time per burpee must be at least ${minTime} seconds for this burpee type`);
+                return;
+            }
+
             const totalSeconds = durationMinutes * 60;
             const totalBurpeeTime = burpees * customTimePerBurpee;
             if (totalBurpeeTime > totalSeconds) {
@@ -253,14 +287,9 @@ class BurpeesCounter {
         this.workoutBurpees = burpees;
         this.workoutStepsPerBurpee = stepsPerBurpee;
         this.workoutCustomTimePerBurpee = customTimePerBurpee;
+        this.workoutPrepTime = preTimerSeconds;
 
-        // If pre-timer is enabled, show countdown first
-        if (preTimerSeconds > 0) {
-            this.startPreCountdown(preTimerSeconds);
-            return;
-        }
-
-        // Otherwise start workout immediately
+        // Start workout immediately (prep time is now at step 0/6 of first burpee)
         this.beginWorkout();
     }
 
@@ -345,20 +374,27 @@ class BurpeesCounter {
         this.timePerBurpee = this.duration / this.totalBurpees;
 
         // Calculate active burpee time and step intervals
+        // Steps 1-(n-1) are active, step n (last step) is rest
         if (customTimePerBurpee > 0) {
             // Use custom time for active burpee, rest fills the remaining time
             this.activeBurpeeTime = customTimePerBurpee;
-            this.stepInterval = this.activeBurpeeTime / (this.stepsPerBurpee + 1);
+            this.stepInterval = this.activeBurpeeTime / (this.stepsPerBurpee - 1); // e.g., 5 active steps for military
         } else {
-            // Auto mode: no rest, use full cycle time
-            this.activeBurpeeTime = this.timePerBurpee;
-            this.stepInterval = this.timePerBurpee / (this.stepsPerBurpee + 1);
+            // Auto mode: time is divided equally across all intervals
+            this.stepInterval = this.timePerBurpee / (this.stepsPerBurpee + 1); // 7 intervals total
+            this.activeBurpeeTime = this.stepInterval * (this.stepsPerBurpee - 1); // 5 active steps
         }
 
+        this.restTime = this.timePerBurpee - this.activeBurpeeTime; // Includes last step + rest period
+        this.prepTime = this.workoutPrepTime || 0;
+
         this.currentBurpee = 1;
-        this.timeRemaining = this.timePerBurpee;
+        // First burpee starts with step 0 (prep time)
         this.currentStep = 0;
-        this.nextStepTime = this.timePerBurpee - this.stepInterval;
+        // First cycle includes prep time + active time + rest time
+        this.timeRemaining = this.prepTime + this.timePerBurpee;
+        // Step 1 starts after prep time (at timePerBurpee mark)
+        this.nextStepTime = this.timePerBurpee;
 
         // Initialize image state - NEW APPROACH
         this.activeImageLayer = 1;
@@ -392,22 +428,30 @@ class BurpeesCounter {
 
             this.timeRemaining -= 0.01;
 
-            // Only play tones during active burpee time (not during rest)
-            const restStartTime = this.timePerBurpee - this.activeBurpeeTime;
-
-            // Check if we need to play a tone for the next step (only during active time)
-            if (this.currentStep < this.stepsPerBurpee &&
-                this.timeRemaining > restStartTime &&
-                this.timeRemaining <= this.nextStepTime) {
+            // Check if we need to advance to the next step
+            if (this.currentStep < this.stepsPerBurpee && this.timeRemaining <= this.nextStepTime) {
                 this.currentStep++;
                 const isLastStep = this.currentStep === this.stepsPerBurpee;
-                this.playTone(isLastStep);
-                this.updateStepImage();
-                this.nextStepTime -= this.stepInterval;
+
+                // Play tone for steps 1-6 (not for step 0 which is prep/rest)
+                if (this.currentStep > 0) {
+                    this.playTone(isLastStep);
+                    this.updateStepImage();
+                }
+
+                // If we just completed step 6, jump directly to rest period
+                if (isLastStep) {
+                    this.timeRemaining = this.restTime;
+                } else {
+                    this.nextStepTime -= this.stepInterval;
+                }
             }
 
             // Update image crossfade transition
             this.updateImageTransition();
+
+            // Update rest overlay visibility
+            this.updateRestOverlay();
 
             if (this.timeRemaining <= 0) {
                 this.nextBurpee();
@@ -425,19 +469,26 @@ class BurpeesCounter {
 
         this.currentBurpee++;
         this.timeRemaining = this.timePerBurpee;
-        this.currentStep = 0;
+
+        // After first burpee, start at step 1 (not step 0)
+        this.currentStep = 1;
+
+        // Step 1 has just started, next step (2) will trigger at:
         this.nextStepTime = this.timePerBurpee - this.stepInterval;
 
-        // Reset to step 0 - NEW APPROACH
+        // Play tone for step 1 and set to step 1 image
+        this.playTone(false);
         if (this.burpeeStepImage1 && this.burpeeStepImage2) {
-            this.burpeeStepImage1.src = 'navy-seal-burpee-00.jpg';
-            this.burpeeStepImage2.src = 'navy-seal-burpee-00.jpg';
+            const imageStep = this.getImageStepForCurrentStep();
+            const imageSrc = `navy-seal-burpee-${imageStep.toString().padStart(2, '0')}.jpg`;
+            this.burpeeStepImage1.src = imageSrc;
+            this.burpeeStepImage2.src = imageSrc;
             this.burpeeStepImage1.style.opacity = '1';
             this.burpeeStepImage2.style.opacity = '0';
             this.activeImageLayer = 1;
-            this.lastProcessedStep = 0;
+            this.lastProcessedStep = 1;
             this.fadeStartTime = null;
-            this.displayedStep = 0;
+            this.displayedStep = 1;
         }
 
         this.updateDisplay();
@@ -477,6 +528,28 @@ class BurpeesCounter {
             ? `<span class="invisible-zero">0</span>${this.displayedStep}`
             : this.displayedStep.toString();
         this.currentStepDisplay.innerHTML = `${currentStepStr}/${this.stepsPerBurpee}`;
+    }
+
+    updateRestOverlay() {
+        if (!this.timePerBurpeeLabel || !this.timePerBurpeeStat) return;
+
+        // Change label and styling during rest periods:
+        // Rest is only after completing all steps (6/6)
+        const inRestPeriod = this.currentStep >= this.stepsPerBurpee && this.timeRemaining <= this.restTime;
+
+        // Step 0 of first burpee is prep time (show as "Prep time")
+        const isFirstBurpeePrepTime = this.currentBurpee === 1 && this.currentStep === 0;
+
+        if (inRestPeriod) {
+            this.timePerBurpeeLabel.textContent = 'Rest time';
+            this.timePerBurpeeStat.classList.add('rest');
+        } else if (isFirstBurpeePrepTime) {
+            this.timePerBurpeeLabel.textContent = 'Prep time';
+            this.timePerBurpeeStat.classList.remove('rest');
+        } else {
+            this.timePerBurpeeLabel.textContent = 'Burpee time';
+            this.timePerBurpeeStat.classList.remove('rest');
+        }
     }
 
     getImageStepForCurrentStep() {
@@ -566,19 +639,41 @@ class BurpeesCounter {
     }
 
     updateCountdown() {
-        const displayTime = Math.max(0, this.timeRemaining);
+        let displayTime = Math.max(0, this.timeRemaining);
 
-        // Update individual burpee countdown - pad with invisible zero
-        const burpeeSeconds = displayTime.toFixed(1);
-        if (displayTime < 10) {
-            this.timePerBurpeeDisplay.innerHTML = `<span class="invisible-zero">0</span>${burpeeSeconds} s`;
+        // Determine if we're in rest period, prep time, or active burpee
+        const inRestPeriod = this.currentStep >= this.stepsPerBurpee && this.timeRemaining <= this.restTime;
+        const isFirstBurpeePrepTime = this.currentBurpee === 1 && this.currentStep === 0;
+
+        // For rest period, show only the rest countdown
+        if (inRestPeriod) {
+            displayTime = this.timeRemaining;
+        } else if (isFirstBurpeePrepTime) {
+            // For prep time, show prep countdown
+            displayTime = this.timeRemaining - this.timePerBurpee;
         } else {
-            this.timePerBurpeeDisplay.textContent = `${burpeeSeconds} s`;
+            // For active burpee, show time in current step interval
+            // Calculate which step we're on and show time until next step
+            displayTime = this.timeRemaining - this.restTime;
+        }
+
+        displayTime = Math.max(0, displayTime);
+
+        // Update individual time countdown - pad with invisible zero
+        const timeSeconds = displayTime.toFixed(1);
+        if (displayTime < 10) {
+            this.timePerBurpeeDisplay.innerHTML = `<span class="invisible-zero">0</span>${timeSeconds} s`;
+        } else {
+            this.timePerBurpeeDisplay.textContent = `${timeSeconds} s`;
         }
 
         // Calculate total time remaining - pad with invisible zero
         const burpeesRemaining = this.totalBurpees - this.currentBurpee;
-        const totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
+        let totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
+        // Subtract prep time since it only happens once
+        if (this.currentBurpee > 1 || this.currentStep > 0) {
+            totalTimeRemaining -= this.prepTime;
+        }
         const minutes = Math.floor(totalTimeRemaining / 60);
         const seconds = Math.floor(totalTimeRemaining % 60);
         const minutesStr = minutes < 10 ? `<span class="invisible-zero">0</span>${minutes}` : minutes.toString();
