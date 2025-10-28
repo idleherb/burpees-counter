@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Burpees Counter</title>
-    <link rel="stylesheet" href="style.css?v=20250128009">
+    <link rel="stylesheet" href="style.css?v=20250128010">
 </head>
 <body>
     <div class="container">
@@ -16,14 +16,16 @@
         </div>
 
         <div class="setup" id="setup">
-            <div class="input-group">
-                <label for="duration">Duration (minutes)</label>
-                <input type="number" id="duration" min="1" value="20">
-            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="duration">Duration (min)</label>
+                    <input type="number" id="duration" min="1" value="20">
+                </div>
 
-            <div class="input-group">
-                <label for="burpees">Number of burpees</label>
-                <input type="number" id="burpees" min="1" value="100">
+                <div class="input-group">
+                    <label for="burpees">Burpees</label>
+                    <input type="number" id="burpees" min="1" value="100">
+                </div>
             </div>
 
             <div class="input-group">
@@ -34,14 +36,16 @@
                 </select>
             </div>
 
-            <div class="input-group">
-                <label for="timePerBurpeeInput">Time per burpee (seconds, optional)</label>
-                <input type="number" id="timePerBurpeeInput" min="3" max="30" value="" placeholder="Auto">
-            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="timePerBurpeeInput">Time per burpee (s)</label>
+                    <input type="number" id="timePerBurpeeInput" min="3" max="30" value="" placeholder="Auto">
+                </div>
 
-            <div class="input-group">
-                <label for="preTimer">Prep time (seconds)</label>
-                <input type="number" id="preTimer" min="0" value="2">
+                <div class="input-group">
+                    <label for="preTimer">Prep time (s)</label>
+                    <input type="number" id="preTimer" min="0" value="2">
+                </div>
             </div>
 
             <div id="workoutInfo" class="workout-info hidden"></div>
@@ -119,6 +123,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=20250128006"></script>
+    <script src="script.js?v=20250128007"></script>
 </body>
 </html>
