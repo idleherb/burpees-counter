@@ -8,28 +8,41 @@
 </head>
 <body>
     <div class="container">
-        <h1>Burpees Counter</h1>
+        <div class="header" id="header">
+            <h1>Burpees Counter</h1>
+            <button id="globalSoundBtn" class="global-sound-btn">Sound OFF</button>
+        </div>
 
         <div class="setup" id="setup">
             <div class="input-group">
-                <label for="duration">Duration (minutes):</label>
+                <label for="duration">Duration (minutes)</label>
                 <input type="number" id="duration" min="1" value="20">
             </div>
 
             <div class="input-group">
-                <label for="burpees">Number of burpees:</label>
+                <label for="burpees">Number of burpees</label>
                 <input type="number" id="burpees" min="1" value="100">
             </div>
 
             <div class="input-group">
-                <label for="burpeeType">Burpee type:</label>
+                <label for="burpeeType">Burpee type</label>
                 <select id="burpeeType">
                     <option value="6">Military Burpees (6 steps)</option>
                     <option value="10">Navy Seal Burpees (10 steps)</option>
                 </select>
             </div>
 
+            <div class="input-group">
+                <label for="preTimer">Prep time (seconds)</label>
+                <input type="number" id="preTimer" min="0" value="5">
+            </div>
+
             <button id="startBtn">Start Workout</button>
+        </div>
+
+        <div class="pre-countdown hidden" id="preCountdown">
+            <div class="pre-countdown-number" id="preCountdownNumber">5</div>
+            <div class="pre-countdown-label">Get Ready!</div>
         </div>
 
         <div class="workout hidden" id="workout">

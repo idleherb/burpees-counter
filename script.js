@@ -32,8 +32,8 @@ class BurpeesCounter {
         gainNode.connect(this.audioContext.destination);
 
         if (isLastStep) {
-            // Longer, lower tone for completion
-            oscillator.frequency.value = 600;
+            // Longer, higher tone for completion
+            oscillator.frequency.value = 1320; // Same as count-in start beep
             oscillator.type = 'sine';
 
             const now = this.audioContext.currentTime;
@@ -44,7 +44,7 @@ class BurpeesCounter {
             oscillator.stop(now + 0.3);
         } else {
             // Short, neutral click sound
-            oscillator.frequency.value = 800;
+            oscillator.frequency.value = 880; // Same as count-in countdown beeps
             oscillator.type = 'sine';
 
             const now = this.audioContext.currentTime;
@@ -57,11 +57,15 @@ class BurpeesCounter {
     }
 
     setupElements() {
+        this.header = document.getElementById('header');
         this.setupSection = document.getElementById('setup');
         this.workoutSection = document.getElementById('workout');
+        this.preCountdownSection = document.getElementById('preCountdown');
+        this.preCountdownNumber = document.getElementById('preCountdownNumber');
         this.durationInput = document.getElementById('duration');
         this.burpeesInput = document.getElementById('burpees');
         this.burpeeTypeSelect = document.getElementById('burpeeType');
+        this.preTimerInput = document.getElementById('preTimer');
         this.startBtn = document.getElementById('startBtn');
         this.totalTimeDisplay = document.getElementById('totalTime');
         this.timePerBurpeeDisplay = document.getElementById('timePerBurpee');
@@ -69,6 +73,7 @@ class BurpeesCounter {
         this.totalBurpeesDisplay = document.getElementById('totalBurpees');
         this.burpeeStepImage1 = document.getElementById('burpeeStepImage1');
         this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
+        this.globalSoundBtn = document.getElementById('globalSoundBtn');
         this.soundBtn = document.getElementById('soundBtn');
         this.resetBtn = document.getElementById('resetBtn');
 
@@ -88,22 +93,31 @@ class BurpeesCounter {
             }
             this.startWorkout();
         });
+        this.globalSoundBtn.addEventListener('click', () => this.toggleSound());
         this.soundBtn.addEventListener('click', () => this.toggleSound());
         this.resetBtn.addEventListener('click', () => this.reset());
     }
 
     toggleSound() {
         this.soundEnabled = !this.soundEnabled;
-        this.soundBtn.textContent = this.soundEnabled ? 'Sound: ON' : 'Sound: OFF';
+        const text = this.soundEnabled ? 'Sound ON' : 'Sound OFF';
+
+        this.globalSoundBtn.textContent = text;
+        this.soundBtn.textContent = text;
+
         if (this.soundEnabled) {
+            this.globalSoundBtn.classList.remove('muted');
             this.soundBtn.classList.remove('muted');
         } else {
+            this.globalSoundBtn.classList.add('muted');
             this.soundBtn.classList.add('muted');
         }
     }
 
     initSoundButton() {
-        this.soundBtn.textContent = 'Sound: OFF';
+        this.globalSoundBtn.textContent = 'Sound OFF';
+        this.globalSoundBtn.classList.add('muted');
+        this.soundBtn.textContent = 'Sound OFF';
         this.soundBtn.classList.add('muted');
     }
 
@@ -111,11 +125,99 @@ class BurpeesCounter {
         const durationMinutes = parseInt(this.durationInput.value);
         const burpees = parseInt(this.burpeesInput.value);
         const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
+        const preTimerSeconds = parseInt(this.preTimerInput.value);
 
         if (!durationMinutes || !burpees || durationMinutes <= 0 || burpees <= 0) {
             alert('Please enter valid numbers for duration and burpees');
             return;
         }
+
+        // Store workout parameters
+        this.workoutDuration = durationMinutes;
+        this.workoutBurpees = burpees;
+        this.workoutStepsPerBurpee = stepsPerBurpee;
+
+        // If pre-timer is enabled, show countdown first
+        if (preTimerSeconds > 0) {
+            this.startPreCountdown(preTimerSeconds);
+            return;
+        }
+
+        // Otherwise start workout immediately
+        this.beginWorkout();
+    }
+
+    startPreCountdown(seconds) {
+        this.header.classList.add('hidden');
+        this.setupSection.classList.add('hidden');
+        this.preCountdownSection.classList.remove('hidden');
+
+        let remaining = seconds;
+        this.preCountdownNumber.textContent = remaining;
+
+        const countdownInterval = setInterval(() => {
+            remaining--;
+            if (remaining > 0) {
+                this.preCountdownNumber.textContent = remaining;
+                // Play sound for last 3 counts
+                if (remaining <= 3) {
+                    this.playCountdownBeep();
+                }
+            } else {
+                clearInterval(countdownInterval);
+                this.playStartBeep();
+                this.preCountdownSection.classList.add('hidden');
+                this.beginWorkout();
+            }
+        }, 1000);
+    }
+
+    playCountdownBeep() {
+        if (!this.soundEnabled || !this.audioContext) return;
+
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        // Higher pitch beep for countdown
+        oscillator.frequency.value = 880;
+        oscillator.type = 'sine';
+
+        const now = this.audioContext.currentTime;
+        gainNode.gain.setValueAtTime(0.3, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.15);
+    }
+
+    playStartBeep() {
+        if (!this.soundEnabled || !this.audioContext) return;
+
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        // Higher, longer beep for "GO"
+        oscillator.frequency.value = 1320; // 1.5x 880 Hz
+        oscillator.type = 'sine';
+
+        const now = this.audioContext.currentTime;
+        gainNode.gain.setValueAtTime(0.35, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.5);
+    }
+
+    beginWorkout() {
+        const durationMinutes = this.workoutDuration;
+        const burpees = this.workoutBurpees;
+        const stepsPerBurpee = this.workoutStepsPerBurpee;
 
         this.duration = durationMinutes * 60; // Convert to seconds
         this.totalBurpees = burpees;
@@ -141,6 +243,7 @@ class BurpeesCounter {
         }
 
         this.updateDisplay();
+        this.header.classList.add('hidden');
         this.setupSection.classList.add('hidden');
         this.workoutSection.classList.remove('hidden');
 
@@ -327,6 +430,7 @@ class BurpeesCounter {
 
         this.workoutSection.classList.add('hidden');
         this.setupSection.classList.remove('hidden');
+        this.header.classList.remove('hidden');
     }
 }
 
