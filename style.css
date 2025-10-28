@@ -199,12 +199,12 @@ button {
     font-variant-numeric: tabular-nums;
 }
 
-.detail-stats {
+.bottom-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     max-width: 360px;
-    margin: 0 auto;
+    margin: -10px auto 0;
 }
 
 .detail-stat {
@@ -286,13 +286,6 @@ button {
     z-index: 2;
 }
 
-.controls {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    max-width: 360px;
-    margin: -10px auto 0;
-}
 
 .btn-icon {
     display: flex;
@@ -382,8 +375,12 @@ button {
         font-size: 1.2rem;
     }
 
+    .bottom-grid {
+        gap: 8px;
+    }
+
     .detail-stat {
-        padding: 10px;
+        padding: 10px 6px;
     }
 
     .detail-label {
@@ -401,9 +398,5 @@ button {
     button {
         padding: 12px 20px;
         font-size: 1rem;
-    }
-
-    .controls {
-        gap: 8px;
     }
 }
