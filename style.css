@@ -169,6 +169,7 @@ button {
     top: 0;
     left: 0;
     transition: opacity 0.1s linear;
+    filter: hue-rotate(242deg) saturate(0.9);
 }
 
 .animation-container .watermark-cover {
