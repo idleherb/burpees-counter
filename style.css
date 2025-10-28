@@ -43,26 +43,25 @@ h1 {
 }
 
 .global-sound-btn {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: #667eea;
-    color: white;
-    white-space: nowrap;
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 12px;
     flex-shrink: 0;
+    aspect-ratio: 1;
 }
 
 .global-sound-btn:hover {
-    background: #5568d3;
+    background: rgba(102, 126, 234, 0.1);
     transform: translateY(-2px);
 }
 
-.global-sound-btn.muted {
-    background: #9e9e9e;
+.global-sound-btn .sound-waves {
+    transition: opacity 0.2s;
+}
+
+.global-sound-btn.muted .sound-waves {
+    opacity: 0;
 }
 
 .hidden {
@@ -325,14 +324,12 @@ button {
     transform: translateY(-2px);
 }
 
-.btn-sound.muted {
-    background: transparent;
-    color: #9e9e9e;
-    border-color: #9e9e9e;
+.btn-sound .sound-waves {
+    transition: opacity 0.2s;
 }
 
 .btn-sound.muted .sound-waves {
-    display: none;
+    opacity: 0;
 }
 
 .btn-reset {
@@ -358,11 +355,6 @@ button {
 
     h1 {
         font-size: 1.5rem;
-    }
-
-    .global-sound-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
     }
 
     .progress {

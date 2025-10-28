@@ -156,7 +156,7 @@ class BurpeesCounter {
         this.soundEnabled = !this.soundEnabled;
         const text = this.soundEnabled ? 'Sound ON' : 'Sound OFF';
 
-        this.globalSoundBtn.textContent = text;
+        this.globalSoundBtn.title = text;
         this.soundBtn.title = text;
 
         if (this.soundEnabled) {
@@ -169,7 +169,7 @@ class BurpeesCounter {
     }
 
     initSoundButton() {
-        this.globalSoundBtn.textContent = 'Sound OFF';
+        this.globalSoundBtn.title = 'Sound OFF';
         this.globalSoundBtn.classList.add('muted');
         this.soundBtn.title = 'Sound OFF';
         this.soundBtn.classList.add('muted');
