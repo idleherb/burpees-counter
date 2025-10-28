@@ -340,10 +340,7 @@ class BurpeesCounter {
         const currentStepStr = this.displayedStep < 10
             ? `<span class="invisible-zero">0</span>${this.displayedStep}`
             : this.displayedStep.toString();
-        const totalStepsStr = this.stepsPerBurpee < 10
-            ? `<span class="invisible-zero">0</span>${this.stepsPerBurpee}`
-            : this.stepsPerBurpee.toString();
-        this.currentStepDisplay.innerHTML = `${currentStepStr}/${totalStepsStr}`;
+        this.currentStepDisplay.innerHTML = `${currentStepStr}/${this.stepsPerBurpee}`;
     }
 
     getImageStepForCurrentStep() {
