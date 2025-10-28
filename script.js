@@ -11,7 +11,7 @@ class BurpeesCounter {
         this.nextStepTime = 0;
         this.currentStep = 0;
         this.audioContext = null;
-        this.soundEnabled = true;
+        this.soundEnabled = false;
 
         this.setupElements();
         this.attachEventListeners();
@@ -67,9 +67,17 @@ class BurpeesCounter {
         this.timePerBurpeeDisplay = document.getElementById('timePerBurpee');
         this.currentBurpeeDisplay = document.getElementById('currentBurpee');
         this.totalBurpeesDisplay = document.getElementById('totalBurpees');
-        this.progressBar = document.getElementById('progressBar');
+        this.burpeeStepImage1 = document.getElementById('burpeeStepImage1');
+        this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
         this.soundBtn = document.getElementById('soundBtn');
         this.resetBtn = document.getElementById('resetBtn');
+
+        // Image transition state - NEW APPROACH
+        this.activeImageLayer = 1; // Which layer (1 or 2) is currently showing
+        this.lastProcessedStep = 0; // Last step we processed for animation
+        this.fadeStartTime = null; // When current fade started (timestamp)
+
+        this.initSoundButton();
     }
 
     attachEventListeners() {
@@ -94,6 +102,11 @@ class BurpeesCounter {
         }
     }
 
+    initSoundButton() {
+        this.soundBtn.textContent = 'Sound: OFF';
+        this.soundBtn.classList.add('muted');
+    }
+
     startWorkout() {
         const durationMinutes = parseInt(this.durationInput.value);
         const burpees = parseInt(this.burpeesInput.value);
@@ -113,6 +126,19 @@ class BurpeesCounter {
         this.timeRemaining = this.timePerBurpee;
         this.currentStep = 0;
         this.nextStepTime = this.timePerBurpee - this.stepInterval;
+
+        // Initialize image state - NEW APPROACH
+        this.activeImageLayer = 1;
+        this.lastProcessedStep = 0;
+        this.fadeStartTime = null;
+
+        // Set initial image
+        if (this.burpeeStepImage1 && this.burpeeStepImage2) {
+            this.burpeeStepImage1.src = 'navy-seal-burpee-00.jpg';
+            this.burpeeStepImage2.src = 'navy-seal-burpee-00.jpg';
+            this.burpeeStepImage1.style.opacity = '1';
+            this.burpeeStepImage2.style.opacity = '0';
+        }
 
         this.updateDisplay();
         this.setupSection.classList.add('hidden');
@@ -134,8 +160,12 @@ class BurpeesCounter {
                 this.currentStep++;
                 const isLastStep = this.currentStep === this.stepsPerBurpee;
                 this.playTone(isLastStep);
+                this.updateStepImage();
                 this.nextStepTime -= this.stepInterval;
             }
+
+            // Update image crossfade transition
+            this.updateImageTransition();
 
             if (this.timeRemaining <= 0) {
                 this.nextBurpee();
@@ -155,13 +185,24 @@ class BurpeesCounter {
         this.timeRemaining = this.timePerBurpee;
         this.currentStep = 0;
         this.nextStepTime = this.timePerBurpee - this.stepInterval;
+
+        // Reset to step 0 - NEW APPROACH
+        if (this.burpeeStepImage1 && this.burpeeStepImage2) {
+            this.burpeeStepImage1.src = 'navy-seal-burpee-00.jpg';
+            this.burpeeStepImage2.src = 'navy-seal-burpee-00.jpg';
+            this.burpeeStepImage1.style.opacity = '1';
+            this.burpeeStepImage2.style.opacity = '0';
+            this.activeImageLayer = 1;
+            this.lastProcessedStep = 0;
+            this.fadeStartTime = null;
+        }
+
         this.updateDisplay();
     }
 
     finishWorkout() {
         clearInterval(this.intervalId);
         this.intervalId = null;
-        this.progressBar.style.width = '0%';
         alert('Workout complete! Great job!');
         this.reset();
     }
@@ -169,14 +210,91 @@ class BurpeesCounter {
     updateDisplay() {
         this.currentBurpeeDisplay.textContent = this.currentBurpee;
         this.totalBurpeesDisplay.textContent = this.totalBurpees;
-
         this.updateCountdown();
+    }
+
+    getImageStepForCurrentStep() {
+        // Map current step to image step
+        if (this.stepsPerBurpee === 6) {
+            // Map 6 military burpee steps to 10 navy seal steps (skip 4-7)
+            const stepMapping = [0, 1, 2, 3, 8, 9, 10];
+            return stepMapping[this.currentStep] || 0;
+        } else {
+            // Direct mapping for 10-step burpees
+            return this.currentStep;
+        }
+    }
+
+    updateStepImage() {
+        // NEW APPROACH - Called when currentStep changes (from timer when audio beeps)
+        if (!this.burpeeStepImage1 || !this.burpeeStepImage2) return;
+
+        const targetImageStep = this.getImageStepForCurrentStep();
+
+        // Only process if this is actually a NEW step
+        if (targetImageStep === this.lastProcessedStep) return;
+
+        this.lastProcessedStep = targetImageStep;
+        this.fadeStartTime = Date.now();
+
+        // Determine which layer to fade TO
+        const fadeToLayer = this.activeImageLayer === 1 ? 2 : 1;
+        const fadeToImage = fadeToLayer === 1 ? this.burpeeStepImage1 : this.burpeeStepImage2;
+
+        // Load new image into the layer we're fading to
+        const stepNumber = targetImageStep.toString().padStart(2, '0');
+        fadeToImage.src = `navy-seal-burpee-${stepNumber}.jpg`;
+    }
+
+    updateImageTransition() {
+        // NEW APPROACH - Called every frame to update the crossfade
+        if (!this.burpeeStepImage1 || !this.burpeeStepImage2) return;
+        if (this.fadeStartTime === null) {
+            // No active fade - ensure correct layer is visible
+            if (this.activeImageLayer === 1) {
+                this.burpeeStepImage1.style.opacity = '1';
+                this.burpeeStepImage2.style.opacity = '0';
+            } else {
+                this.burpeeStepImage1.style.opacity = '0';
+                this.burpeeStepImage2.style.opacity = '1';
+            }
+            return;
+        }
+
+        // Calculate fade progress based on time elapsed
+        const elapsed = (Date.now() - this.fadeStartTime) / 1000; // seconds
+        const transitionDuration = this.stepInterval / 4; // Use quarter of the step interval
+        const progress = Math.min(1, elapsed / transitionDuration);
+
+        if (progress >= 1) {
+            // Fade complete - swap active layer
+            this.activeImageLayer = this.activeImageLayer === 1 ? 2 : 1;
+            this.fadeStartTime = null;
+
+            // Set final opacities
+            if (this.activeImageLayer === 1) {
+                this.burpeeStepImage1.style.opacity = '1';
+                this.burpeeStepImage2.style.opacity = '0';
+            } else {
+                this.burpeeStepImage1.style.opacity = '0';
+                this.burpeeStepImage2.style.opacity = '1';
+            }
+        } else {
+            // Fade in progress
+            if (this.activeImageLayer === 1) {
+                // Fading from 1 to 2
+                this.burpeeStepImage1.style.opacity = (1 - progress).toFixed(2);
+                this.burpeeStepImage2.style.opacity = progress.toFixed(2);
+            } else {
+                // Fading from 2 to 1
+                this.burpeeStepImage1.style.opacity = progress.toFixed(2);
+                this.burpeeStepImage2.style.opacity = (1 - progress).toFixed(2);
+            }
+        }
     }
 
     updateCountdown() {
         const displayTime = Math.max(0, this.timeRemaining);
-        const percentage = (displayTime / this.timePerBurpee) * 100;
-        this.progressBar.style.width = `${percentage}%`;
 
         // Update individual burpee countdown - pad with invisible zero
         const burpeeSeconds = displayTime.toFixed(1);
