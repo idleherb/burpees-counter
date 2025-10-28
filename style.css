@@ -49,13 +49,13 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s;
-    background: #2196f3;
+    background: #667eea;
     color: white;
     white-space: nowrap;
 }
 
 .global-sound-btn:hover {
-    background: #0b7dda;
+    background: #5568d3;
     transform: translateY(-2px);
 }
 
@@ -274,12 +274,12 @@ button {
 }
 
 .btn-sound {
-    background: #2196f3;
+    background: #667eea;
     color: white;
 }
 
 .btn-sound:hover {
-    background: #0b7dda;
+    background: #5568d3;
     transform: translateY(-2px);
 }
 
@@ -288,12 +288,12 @@ button {
 }
 
 .btn-reset {
-    background: #f44336;
+    background: #764ba2;
     color: white;
 }
 
 .btn-reset:hover {
-    background: #da190b;
+    background: #5e3a82;
     transform: translateY(-2px);
 }
 
