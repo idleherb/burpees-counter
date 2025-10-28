@@ -71,6 +71,7 @@ class BurpeesCounter {
         this.timePerBurpeeDisplay = document.getElementById('timePerBurpee');
         this.currentBurpeeDisplay = document.getElementById('currentBurpee');
         this.totalBurpeesDisplay = document.getElementById('totalBurpees');
+        this.currentStepDisplay = document.getElementById('currentStep');
         this.burpeeStepImage1 = document.getElementById('burpeeStepImage1');
         this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
         this.globalSoundBtn = document.getElementById('globalSoundBtn');
@@ -264,6 +265,7 @@ class BurpeesCounter {
                 const isLastStep = this.currentStep === this.stepsPerBurpee;
                 this.playTone(isLastStep);
                 this.updateStepImage();
+                this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
                 this.nextStepTime -= this.stepInterval;
             }
 
@@ -313,6 +315,7 @@ class BurpeesCounter {
     updateDisplay() {
         this.currentBurpeeDisplay.textContent = this.currentBurpee;
         this.totalBurpeesDisplay.textContent = this.totalBurpees;
+        this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
         this.updateCountdown();
     }
 
