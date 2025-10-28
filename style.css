@@ -211,8 +211,9 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 5px;
-    padding: 12px;
+    padding: 15px 8px;
     background: #f8f8f8;
     border-radius: 8px;
 }
