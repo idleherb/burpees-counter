@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Burpees Counter</title>
-    <link rel="stylesheet" href="style.css?v=20250128005">
+    <link rel="stylesheet" href="style.css?v=20250128006">
 </head>
 <body>
     <div class="container">
@@ -35,9 +35,16 @@
             </div>
 
             <div class="input-group">
+                <label for="timePerBurpeeInput">Time per burpee (seconds, optional)</label>
+                <input type="number" id="timePerBurpeeInput" min="1" max="300" value="" placeholder="Auto">
+            </div>
+
+            <div class="input-group">
                 <label for="preTimer">Prep time (seconds)</label>
                 <input type="number" id="preTimer" min="0" value="0">
             </div>
+
+            <div id="workoutInfo" class="workout-info hidden"></div>
 
             <div class="setup-buttons">
                 <button id="globalSoundBtn" class="global-sound-btn btn-icon" title="Sound OFF">
@@ -112,6 +119,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=20250128002"></script>
+    <script src="script.js?v=20250128003"></script>
 </body>
 </html>

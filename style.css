@@ -41,6 +41,21 @@ h1 {
     letter-spacing: 2px;
 }
 
+.workout-info {
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #667eea;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.workout-info.error {
+    color: #f44336;
+    background: #ffebee;
+}
+
 .setup-buttons {
     display: flex;
     gap: 10px;

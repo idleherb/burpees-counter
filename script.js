@@ -76,7 +76,9 @@ class BurpeesCounter {
         this.durationInput = document.getElementById('duration');
         this.burpeesInput = document.getElementById('burpees');
         this.burpeeTypeSelect = document.getElementById('burpeeType');
+        this.timePerBurpeeInput = document.getElementById('timePerBurpeeInput');
         this.preTimerInput = document.getElementById('preTimer');
+        this.workoutInfo = document.getElementById('workoutInfo');
         this.startBtn = document.getElementById('startBtn');
         this.totalTimeDisplay = document.getElementById('totalTime');
         this.timePerBurpeeDisplay = document.getElementById('timePerBurpee');
@@ -113,6 +115,47 @@ class BurpeesCounter {
         this.restartBtn.addEventListener('click', () => this.restart());
         this.soundBtn.addEventListener('click', () => this.toggleSound());
         this.resetBtn.addEventListener('click', () => this.reset());
+
+        // Update workout info when inputs change
+        this.durationInput.addEventListener('input', () => this.updateWorkoutInfo());
+        this.burpeesInput.addEventListener('input', () => this.updateWorkoutInfo());
+        this.timePerBurpeeInput.addEventListener('input', () => this.updateWorkoutInfo());
+    }
+
+    updateWorkoutInfo() {
+        const durationMinutes = parseInt(this.durationInput.value) || 0;
+        const burpees = parseInt(this.burpeesInput.value) || 0;
+        const customTimePerBurpee = parseFloat(this.timePerBurpeeInput.value) || 0;
+
+        if (durationMinutes <= 0 || burpees <= 0) {
+            this.workoutInfo.classList.add('hidden');
+            return;
+        }
+
+        const totalSeconds = durationMinutes * 60;
+
+        if (customTimePerBurpee > 0) {
+            const totalBurpeeTime = burpees * customTimePerBurpee;
+            const restTime = totalSeconds - totalBurpeeTime;
+
+            if (restTime < 0) {
+                this.workoutInfo.classList.remove('hidden');
+                this.workoutInfo.classList.add('error');
+                const excessMinutes = Math.abs(restTime / 60).toFixed(1);
+                this.workoutInfo.textContent = `⚠️ Burpees need ${excessMinutes} more minutes than available`;
+            } else {
+                this.workoutInfo.classList.remove('hidden', 'error');
+                const restMinutes = Math.floor(restTime / 60);
+                const restSeconds = Math.floor(restTime % 60);
+                const burpeeMinutes = Math.floor(totalBurpeeTime / 60);
+                const burpeeSeconds = Math.floor(totalBurpeeTime % 60);
+                this.workoutInfo.textContent = `💪 Burpees: ${burpeeMinutes}:${burpeeSeconds.toString().padStart(2, '0')} | 😌 Rest: ${restMinutes}:${restSeconds.toString().padStart(2, '0')}`;
+            }
+        } else {
+            const autoTimePerBurpee = (totalSeconds / burpees).toFixed(1);
+            this.workoutInfo.classList.remove('hidden', 'error');
+            this.workoutInfo.textContent = `⏱️ Auto: ${autoTimePerBurpee}s per burpee (no rest)`;
+        }
     }
 
     togglePause() {
@@ -189,6 +232,7 @@ class BurpeesCounter {
         const durationMinutes = parseInt(this.durationInput.value);
         const burpees = parseInt(this.burpeesInput.value);
         const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
+        const customTimePerBurpee = parseFloat(this.timePerBurpeeInput.value) || 0;
         const preTimerSeconds = parseInt(this.preTimerInput.value);
 
         if (!durationMinutes || !burpees || durationMinutes <= 0 || burpees <= 0) {
@@ -196,10 +240,21 @@ class BurpeesCounter {
             return;
         }
 
+        // Validate custom time per burpee if specified
+        if (customTimePerBurpee > 0) {
+            const totalSeconds = durationMinutes * 60;
+            const totalBurpeeTime = burpees * customTimePerBurpee;
+            if (totalBurpeeTime > totalSeconds) {
+                alert('Time per burpee is too high for the given duration and number of burpees');
+                return;
+            }
+        }
+
         // Store workout parameters
         this.workoutDuration = durationMinutes;
         this.workoutBurpees = burpees;
         this.workoutStepsPerBurpee = stepsPerBurpee;
+        this.workoutCustomTimePerBurpee = customTimePerBurpee;
 
         // If pre-timer is enabled, show countdown first
         if (preTimerSeconds > 0) {
@@ -282,12 +337,26 @@ class BurpeesCounter {
         const durationMinutes = this.workoutDuration;
         const burpees = this.workoutBurpees;
         const stepsPerBurpee = this.workoutStepsPerBurpee;
+        const customTimePerBurpee = this.workoutCustomTimePerBurpee;
 
         this.duration = durationMinutes * 60; // Convert to seconds
         this.totalBurpees = burpees;
         this.stepsPerBurpee = stepsPerBurpee;
+
+        // Calculate time per burpee cycle (including rest)
         this.timePerBurpee = this.duration / this.totalBurpees;
-        this.stepInterval = this.timePerBurpee / (this.stepsPerBurpee + 1); // steps + 1 rest period
+
+        // Calculate active burpee time and step intervals
+        if (customTimePerBurpee > 0) {
+            // Use custom time for active burpee, rest fills the remaining time
+            this.activeBurpeeTime = customTimePerBurpee;
+            this.stepInterval = this.activeBurpeeTime / (this.stepsPerBurpee + 1);
+        } else {
+            // Auto mode: no rest, use full cycle time
+            this.activeBurpeeTime = this.timePerBurpee;
+            this.stepInterval = this.timePerBurpee / (this.stepsPerBurpee + 1);
+        }
+
         this.currentBurpee = 1;
         this.timeRemaining = this.timePerBurpee;
         this.currentStep = 0;
@@ -325,8 +394,13 @@ class BurpeesCounter {
 
             this.timeRemaining -= 0.01;
 
-            // Check if we need to play a tone for the next step
-            if (this.currentStep < this.stepsPerBurpee && this.timeRemaining <= this.nextStepTime) {
+            // Only play tones during active burpee time (not during rest)
+            const restStartTime = this.timePerBurpee - this.activeBurpeeTime;
+
+            // Check if we need to play a tone for the next step (only during active time)
+            if (this.currentStep < this.stepsPerBurpee &&
+                this.timeRemaining > restStartTime &&
+                this.timeRemaining <= this.nextStepTime) {
                 this.currentStep++;
                 const isLastStep = this.currentStep === this.stepsPerBurpee;
                 this.playTone(isLastStep);
