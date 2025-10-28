@@ -77,6 +77,7 @@ class BurpeesCounter {
         this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
         this.globalSoundBtn = document.getElementById('globalSoundBtn');
         this.pauseBtn = document.getElementById('pauseBtn');
+        this.restartBtn = document.getElementById('restartBtn');
         this.soundBtn = document.getElementById('soundBtn');
         this.resetBtn = document.getElementById('resetBtn');
 
@@ -99,13 +100,20 @@ class BurpeesCounter {
         });
         this.globalSoundBtn.addEventListener('click', () => this.toggleSound());
         this.pauseBtn.addEventListener('click', () => this.togglePause());
+        this.restartBtn.addEventListener('click', () => this.restart());
         this.soundBtn.addEventListener('click', () => this.toggleSound());
         this.resetBtn.addEventListener('click', () => this.reset());
     }
 
     togglePause() {
         this.isPaused = !this.isPaused;
-        this.pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+
+        // Change icon between pause and play
+        const pauseIcon = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        const playIcon = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+
+        this.pauseBtn.querySelector('svg').innerHTML = this.isPaused ? playIcon : pauseIcon;
+        this.pauseBtn.title = this.isPaused ? 'Resume' : 'Pause';
 
         if (this.isPaused && this.audioContext) {
             this.audioContext.suspend();
@@ -114,12 +122,38 @@ class BurpeesCounter {
         }
     }
 
+    restart() {
+        // Clear current workout
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+
+        this.isPaused = false;
+        const pauseIcon = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        this.pauseBtn.querySelector('svg').innerHTML = pauseIcon;
+        this.pauseBtn.title = 'Pause';
+
+        if (this.audioContext) {
+            this.audioContext.resume();
+        }
+
+        // Restart with prep timer if enabled
+        const preTimerSeconds = parseInt(this.preTimerInput.value);
+        if (preTimerSeconds > 0) {
+            this.workoutSection.classList.add('hidden');
+            this.startPreCountdown(preTimerSeconds);
+        } else {
+            this.beginWorkout();
+        }
+    }
+
     toggleSound() {
         this.soundEnabled = !this.soundEnabled;
         const text = this.soundEnabled ? 'Sound ON' : 'Sound OFF';
 
         this.globalSoundBtn.textContent = text;
-        this.soundBtn.textContent = text;
+        this.soundBtn.title = text;
 
         if (this.soundEnabled) {
             this.globalSoundBtn.classList.remove('muted');
@@ -133,7 +167,7 @@ class BurpeesCounter {
     initSoundButton() {
         this.globalSoundBtn.textContent = 'Sound OFF';
         this.globalSoundBtn.classList.add('muted');
-        this.soundBtn.textContent = 'Sound OFF';
+        this.soundBtn.title = 'Sound OFF';
         this.soundBtn.classList.add('muted');
     }
 
@@ -477,7 +511,11 @@ class BurpeesCounter {
         this.currentBurpee = 0;
         this.timeRemaining = 0;
         this.isPaused = false;
-        this.pauseBtn.textContent = 'Pause';
+
+        // Reset pause button icon
+        const pauseIcon = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        this.pauseBtn.querySelector('svg').innerHTML = pauseIcon;
+        this.pauseBtn.title = 'Pause';
 
         if (this.audioContext) {
             this.audioContext.resume();

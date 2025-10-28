@@ -76,9 +76,29 @@
             </div>
 
             <div class="controls">
-                <button id="pauseBtn" class="btn-pause">Pause</button>
-                <button id="soundBtn" class="btn-sound">Sound: ON</button>
-                <button id="resetBtn" class="btn-reset">Reset</button>
+                <button id="pauseBtn" class="btn-icon btn-pause" title="Pause">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                <button id="restartBtn" class="btn-icon btn-restart" title="Restart">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+                    </svg>
+                </button>
+                <button id="soundBtn" class="btn-icon btn-sound" title="Sound OFF">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path class="sound-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M18.36 5.64a9 9 0 0 1 0 12.73"></path>
+                    </svg>
+                </button>
+                <button id="resetBtn" class="btn-icon btn-reset" title="Home">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
