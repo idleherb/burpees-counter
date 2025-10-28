@@ -82,6 +82,7 @@ class BurpeesCounter {
         this.activeImageLayer = 1; // Which layer (1 or 2) is currently showing
         this.lastProcessedStep = 0; // Last step we processed for animation
         this.fadeStartTime = null; // When current fade started (timestamp)
+        this.displayedStep = 0; // Step number currently displayed (for early increment)
 
         this.initSoundButton();
     }
@@ -234,6 +235,7 @@ class BurpeesCounter {
         this.activeImageLayer = 1;
         this.lastProcessedStep = 0;
         this.fadeStartTime = null;
+        this.displayedStep = 0;
 
         // Set initial image
         if (this.burpeeStepImage1 && this.burpeeStepImage2) {
@@ -265,7 +267,6 @@ class BurpeesCounter {
                 const isLastStep = this.currentStep === this.stepsPerBurpee;
                 this.playTone(isLastStep);
                 this.updateStepImage();
-                this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
                 this.nextStepTime -= this.stepInterval;
             }
 
@@ -300,6 +301,7 @@ class BurpeesCounter {
             this.activeImageLayer = 1;
             this.lastProcessedStep = 0;
             this.fadeStartTime = null;
+            this.displayedStep = 0;
         }
 
         this.updateDisplay();
@@ -315,7 +317,7 @@ class BurpeesCounter {
     updateDisplay() {
         this.currentBurpeeDisplay.textContent = this.currentBurpee;
         this.totalBurpeesDisplay.textContent = this.totalBurpees;
-        this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
+        this.currentStepDisplay.textContent = `${this.displayedStep}/${this.stepsPerBurpee}`;
         this.updateCountdown();
     }
 
@@ -371,6 +373,12 @@ class BurpeesCounter {
         const elapsed = (Date.now() - this.fadeStartTime) / 1000; // seconds
         const transitionDuration = this.stepInterval / 4; // Use quarter of the step interval
         const progress = Math.min(1, elapsed / transitionDuration);
+
+        // Update step counter display at 75% of transition
+        if (progress >= 0.75 && this.displayedStep !== this.currentStep) {
+            this.displayedStep = this.currentStep;
+            this.currentStepDisplay.textContent = `${this.currentStep}/${this.stepsPerBurpee}`;
+        }
 
         if (progress >= 1) {
             // Fade complete - swap active layer
