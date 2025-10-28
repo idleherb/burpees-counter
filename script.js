@@ -17,10 +17,20 @@ class BurpeesCounter {
         this.setupElements();
         this.attachEventListeners();
         this.initAudio();
+        this.preloadImages();
     }
 
     initAudio() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    preloadImages() {
+        // Preload all burpee step images to prevent jittery first animation
+        for (let i = 0; i <= 10; i++) {
+            const img = new Image();
+            const stepNumber = i.toString().padStart(2, '0');
+            img.src = `navy-seal-burpee-${stepNumber}.jpg`;
+        }
     }
 
     playTone(isLastStep = false) {
