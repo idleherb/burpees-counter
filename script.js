@@ -219,14 +219,8 @@ class BurpeesCounter {
             this.audioContext.resume();
         }
 
-        // Restart with prep timer if enabled
-        const preTimerSeconds = parseInt(this.preTimerInput.value);
-        if (preTimerSeconds > 0) {
-            this.workoutSection.classList.add('hidden');
-            this.startPreCountdown(preTimerSeconds);
-        } else {
-            this.beginWorkout();
-        }
+        // Restart workout immediately (prep time is in step 0 of first burpee)
+        this.beginWorkout();
     }
 
     toggleSound() {
