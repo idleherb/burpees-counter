@@ -155,42 +155,6 @@ button {
     box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Pre-Countdown Section */
-.pre-countdown {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 60px 40px;
-}
-
-.pre-countdown-number {
-    font-size: 8rem;
-    font-weight: 700;
-    color: #667eea;
-    animation: pulse 1s ease-in-out infinite;
-}
-
-.pre-countdown-label {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #999;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
-}
-
 /* Workout Section */
 .workout {
     display: flex;
@@ -430,14 +394,6 @@ button {
 
     .detail-label {
         font-size: 0.7rem;
-    }
-
-    .pre-countdown-number {
-        font-size: 6rem;
-    }
-
-    .pre-countdown-label {
-        font-size: 1rem;
     }
 
     button {

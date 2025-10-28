@@ -71,8 +71,6 @@ class BurpeesCounter {
         this.header = document.getElementById('header');
         this.setupSection = document.getElementById('setup');
         this.workoutSection = document.getElementById('workout');
-        this.preCountdownSection = document.getElementById('preCountdown');
-        this.preCountdownNumber = document.getElementById('preCountdownNumber');
         this.durationInput = document.getElementById('duration');
         this.burpeesInput = document.getElementById('burpees');
         this.burpeeTypeSelect = document.getElementById('burpeeType');
@@ -291,73 +289,6 @@ class BurpeesCounter {
 
         // Start workout immediately (prep time is now at step 0/6 of first burpee)
         this.beginWorkout();
-    }
-
-    startPreCountdown(seconds) {
-        this.header.classList.add('hidden');
-        this.setupSection.classList.add('hidden');
-        this.preCountdownSection.classList.remove('hidden');
-
-        let remaining = seconds;
-        this.preCountdownNumber.textContent = remaining;
-
-        const countdownInterval = setInterval(() => {
-            remaining--;
-            if (remaining > 0) {
-                this.preCountdownNumber.textContent = remaining;
-                // Play sound for last 3 counts
-                if (remaining <= 3) {
-                    this.playCountdownBeep();
-                }
-            } else {
-                clearInterval(countdownInterval);
-                this.playStartBeep();
-                this.preCountdownSection.classList.add('hidden');
-                this.beginWorkout();
-            }
-        }, 1000);
-    }
-
-    playCountdownBeep() {
-        if (!this.soundEnabled || !this.audioContext) return;
-
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        // Higher pitch beep for countdown
-        oscillator.frequency.value = 880;
-        oscillator.type = 'sine';
-
-        const now = this.audioContext.currentTime;
-        gainNode.gain.setValueAtTime(0.3, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-
-        oscillator.start(now);
-        oscillator.stop(now + 0.15);
-    }
-
-    playStartBeep() {
-        if (!this.soundEnabled || !this.audioContext) return;
-
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        // Higher, longer beep for "GO"
-        oscillator.frequency.value = 1320; // 1.5x 880 Hz
-        oscillator.type = 'sine';
-
-        const now = this.audioContext.currentTime;
-        gainNode.gain.setValueAtTime(0.35, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
-        oscillator.start(now);
-        oscillator.stop(now + 0.5);
     }
 
     beginWorkout() {
