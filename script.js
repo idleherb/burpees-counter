@@ -123,6 +123,10 @@ class BurpeesCounter {
     }
 
     restart() {
+        if (!confirm('Restart the workout from the beginning?')) {
+            return;
+        }
+
         // Clear current workout
         if (this.intervalId) {
             clearInterval(this.intervalId);
@@ -500,6 +504,10 @@ class BurpeesCounter {
     }
 
     reset() {
+        if (!confirm('End workout and return to setup?')) {
+            return;
+        }
+
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
