@@ -133,28 +133,26 @@ class BurpeesCounter {
         }
 
         const totalSeconds = durationMinutes * 60;
+        const timePerBurpeeCycle = totalSeconds / burpees;
 
         if (customTimePerBurpee > 0) {
-            const totalBurpeeTime = burpees * customTimePerBurpee;
-            const restTime = totalSeconds - totalBurpeeTime;
-
-            if (restTime < 0) {
+            // Custom mode
+            if (customTimePerBurpee > timePerBurpeeCycle) {
+                // Error: not enough time
                 this.workoutInfo.classList.remove('hidden');
                 this.workoutInfo.classList.add('error');
-                const excessMinutes = Math.abs(restTime / 60).toFixed(1);
-                this.workoutInfo.textContent = `⚠️ Burpees need ${excessMinutes} more minutes than available`;
+                const shortfall = (customTimePerBurpee - timePerBurpeeCycle).toFixed(1);
+                this.workoutInfo.textContent = `⚠️ Not enough time: need ${shortfall}s more per burpee`;
             } else {
+                // Valid: show burpee time and rest time per burpee
                 this.workoutInfo.classList.remove('hidden', 'error');
-                const restMinutes = Math.floor(restTime / 60);
-                const restSeconds = Math.floor(restTime % 60);
-                const burpeeMinutes = Math.floor(totalBurpeeTime / 60);
-                const burpeeSeconds = Math.floor(totalBurpeeTime % 60);
-                this.workoutInfo.textContent = `💪 Burpees: ${burpeeMinutes}:${burpeeSeconds.toString().padStart(2, '0')} | 😌 Rest: ${restMinutes}:${restSeconds.toString().padStart(2, '0')}`;
+                const restPerBurpee = (timePerBurpeeCycle - customTimePerBurpee).toFixed(1);
+                this.workoutInfo.textContent = `⏱️ ${customTimePerBurpee}s per burpee | 😌 ${restPerBurpee}s rest per burpee`;
             }
         } else {
-            const autoTimePerBurpee = (totalSeconds / burpees).toFixed(1);
+            // Auto mode: show time per burpee with 0 rest
             this.workoutInfo.classList.remove('hidden', 'error');
-            this.workoutInfo.textContent = `⏱️ Auto: ${autoTimePerBurpee}s per burpee (no rest)`;
+            this.workoutInfo.textContent = `⏱️ ${timePerBurpeeCycle.toFixed(1)}s per burpee | 😌 0s rest per burpee`;
         }
     }
 
