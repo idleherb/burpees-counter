@@ -200,14 +200,15 @@ button {
 }
 
 .detail-stats {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     max-width: 360px;
     margin: 0 auto;
 }
 
 .detail-stat {
-    flex: 1;
+    grid-column: span 2;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -286,15 +287,11 @@ button {
 }
 
 .controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     max-width: 360px;
     margin: -10px auto 0;
-}
-
-.controls button {
-    flex: 1;
-    min-width: 0;
 }
 
 .btn-icon {
