@@ -302,27 +302,28 @@ button {
 }
 
 .btn-restart {
-    background: #667eea;
-    color: white;
+    background: #e0e0e0;
+    color: #555;
 }
 
 .btn-restart:hover {
-    background: #5568d3;
+    background: #d0d0d0;
     transform: translateY(-2px);
 }
 
 .btn-sound {
-    background: #667eea;
-    color: white;
+    background: #e0e0e0;
+    color: #555;
 }
 
 .btn-sound:hover {
-    background: #5568d3;
+    background: #d0d0d0;
     transform: translateY(-2px);
 }
 
 .btn-sound.muted {
     background: #9e9e9e;
+    color: white;
 }
 
 .btn-sound.muted .sound-waves {
@@ -330,12 +331,12 @@ button {
 }
 
 .btn-reset {
-    background: #764ba2;
-    color: white;
+    background: #e0e0e0;
+    color: #555;
 }
 
 .btn-reset:hover {
-    background: #5e3a82;
+    background: #d0d0d0;
     transform: translateY(-2px);
 }
 
