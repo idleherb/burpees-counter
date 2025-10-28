@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Burpees Counter</title>
-    <link rel="stylesheet" href="style.css?v=20250128001">
+    <link rel="stylesheet" href="style.css?v=20250128003">
 </head>
 <body>
     <div class="container">
@@ -56,25 +56,15 @@
         </div>
 
         <div class="workout hidden" id="workout">
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-label">Total time</span>
-                    <span id="totalTime" class="stat-value">--:--</span>
+            <div class="hero-stats">
+                <div class="progress">
+                    <span id="currentBurpee" class="current">0</span>
+                    <span class="separator">/</span>
+                    <span id="totalBurpees" class="total">0</span>
                 </div>
-                <div class="stat">
-                    <span class="stat-label">Burpee time</span>
-                    <span id="timePerBurpee" class="stat-value">--s</span>
+                <div class="total-time">
+                    <span id="totalTime">--:--</span>
                 </div>
-                <div class="stat">
-                    <span class="stat-label">Step</span>
-                    <span id="currentStep" class="stat-value">0/0</span>
-                </div>
-            </div>
-
-            <div class="progress">
-                <span id="currentBurpee" class="current">0</span>
-                <span class="separator">/</span>
-                <span id="totalBurpees" class="total">0</span>
             </div>
 
             <div class="timer">
@@ -82,6 +72,17 @@
                     <img id="burpeeStepImage1" class="step-image" src="navy-seal-burpee-00.jpg" alt="Navy SEAL Burpee Step">
                     <img id="burpeeStepImage2" class="step-image" src="navy-seal-burpee-00.jpg" alt="Navy SEAL Burpee Step">
                     <div class="watermark-cover"></div>
+                </div>
+            </div>
+
+            <div class="detail-stats">
+                <div class="detail-stat">
+                    <span class="detail-label">Step</span>
+                    <span id="currentStep" class="detail-value">0/0</span>
+                </div>
+                <div class="detail-stat">
+                    <span class="detail-label">Burpee time</span>
+                    <span id="timePerBurpee" class="detail-value">--s</span>
                 </div>
             </div>
 
