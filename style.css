@@ -279,6 +279,16 @@ button {
     text-overflow: ellipsis;
 }
 
+.btn-pause {
+    background: #667eea;
+    color: white;
+}
+
+.btn-pause:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+}
+
 .btn-sound {
     background: #667eea;
     color: white;

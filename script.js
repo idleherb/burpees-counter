@@ -6,6 +6,7 @@ class BurpeesCounter {
         this.currentBurpee = 0;
         this.timeRemaining = 0;
         this.intervalId = null;
+        this.isPaused = false;
         this.stepsPerBurpee = 0;
         this.stepInterval = 0;
         this.nextStepTime = 0;
@@ -75,6 +76,7 @@ class BurpeesCounter {
         this.burpeeStepImage1 = document.getElementById('burpeeStepImage1');
         this.burpeeStepImage2 = document.getElementById('burpeeStepImage2');
         this.globalSoundBtn = document.getElementById('globalSoundBtn');
+        this.pauseBtn = document.getElementById('pauseBtn');
         this.soundBtn = document.getElementById('soundBtn');
         this.resetBtn = document.getElementById('resetBtn');
 
@@ -96,8 +98,20 @@ class BurpeesCounter {
             this.startWorkout();
         });
         this.globalSoundBtn.addEventListener('click', () => this.toggleSound());
+        this.pauseBtn.addEventListener('click', () => this.togglePause());
         this.soundBtn.addEventListener('click', () => this.toggleSound());
         this.resetBtn.addEventListener('click', () => this.reset());
+    }
+
+    togglePause() {
+        this.isPaused = !this.isPaused;
+        this.pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+
+        if (this.isPaused && this.audioContext) {
+            this.audioContext.suspend();
+        } else if (this.audioContext) {
+            this.audioContext.resume();
+        }
     }
 
     toggleSound() {
@@ -259,6 +273,8 @@ class BurpeesCounter {
         }
 
         this.intervalId = setInterval(() => {
+            if (this.isPaused) return;
+
             this.timeRemaining -= 0.01;
 
             // Check if we need to play a tone for the next step
@@ -460,6 +476,12 @@ class BurpeesCounter {
         this.timePerBurpee = 0;
         this.currentBurpee = 0;
         this.timeRemaining = 0;
+        this.isPaused = false;
+        this.pauseBtn.textContent = 'Pause';
+
+        if (this.audioContext) {
+            this.audioContext.resume();
+        }
 
         this.workoutSection.classList.add('hidden');
         this.setupSection.classList.remove('hidden');
