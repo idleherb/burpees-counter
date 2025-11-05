@@ -433,26 +433,12 @@ class BurpeesCounter {
     }
 
     updateBurpeeDisplay() {
-        // Determine how many digits the total has
-        const totalDigits = this.totalBurpees.toString().length;
-        const currentDigits = this.currentBurpee.toString().length;
-        const paddingNeeded = totalDigits - currentDigits;
-
-        let currentBurpeeStr = this.currentBurpee.toString();
-        if (paddingNeeded > 0) {
-            const padding = '<span class="invisible-zero">0</span>'.repeat(paddingNeeded);
-            currentBurpeeStr = padding + currentBurpeeStr;
-        }
-
-        this.currentBurpeeDisplay.innerHTML = currentBurpeeStr;
+        this.currentBurpeeDisplay.textContent = this.currentBurpee;
         this.totalBurpeesDisplay.textContent = this.totalBurpees;
     }
 
     updateStepDisplay() {
-        const currentStepStr = this.displayedStep < 10
-            ? `<span class="invisible-zero">0</span>${this.displayedStep}`
-            : this.displayedStep.toString();
-        this.currentStepDisplay.innerHTML = `${currentStepStr}/${this.stepsPerBurpee}`;
+        this.currentStepDisplay.innerHTML = `<span class="step-current">${this.displayedStep}</span><span class="step-separator">/</span><span class="step-total">${this.stepsPerBurpee}</span>`;
     }
 
     updateRestOverlay() {
@@ -584,15 +570,11 @@ class BurpeesCounter {
 
         displayTime = Math.max(0, displayTime);
 
-        // Update individual time countdown - pad with invisible zero
+        // Update individual time countdown
         const timeSeconds = displayTime.toFixed(1);
-        if (displayTime < 10) {
-            this.timePerBurpeeDisplay.innerHTML = `<span class="invisible-zero">0</span>${timeSeconds} s`;
-        } else {
-            this.timePerBurpeeDisplay.textContent = `${timeSeconds} s`;
-        }
+        this.timePerBurpeeDisplay.textContent = timeSeconds;
 
-        // Calculate total time remaining - pad with invisible zero
+        // Calculate total time remaining
         const burpeesRemaining = this.totalBurpees - this.currentBurpee;
         let totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
         // Subtract prep time since it only happens once
@@ -601,8 +583,7 @@ class BurpeesCounter {
         }
         const minutes = Math.floor(totalTimeRemaining / 60);
         const seconds = Math.floor(totalTimeRemaining % 60);
-        const minutesStr = minutes < 10 ? `<span class="invisible-zero">0</span>${minutes}` : minutes.toString();
-        this.totalTimeDisplay.innerHTML = `${minutesStr}:${seconds.toString().padStart(2, '0')}`;
+        this.totalTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
 
     reset() {
