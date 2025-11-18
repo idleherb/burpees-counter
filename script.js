@@ -82,6 +82,7 @@ class BurpeesCounter {
         this.timePerBurpeeDisplay = document.getElementById('timePerBurpee');
         this.currentBurpeeDisplay = document.getElementById('currentBurpee');
         this.totalBurpeesDisplay = document.getElementById('totalBurpees');
+        this.burpeeTypeDisplay = document.getElementById('burpeeTypeDisplay');
         this.currentStepDisplay = document.getElementById('currentStep');
         this.timePerBurpeeLabel = document.getElementById('timePerBurpeeLabel');
         this.timePerBurpeeStat = document.getElementById('timePerBurpeeStat');
@@ -136,6 +137,22 @@ class BurpeesCounter {
             return 10;
         }
         return parseInt(burpeeType);
+    }
+
+    getBurpeeTypeName() {
+        const burpeeType = this.burpeeTypeSelect.value;
+        switch (burpeeType) {
+            case '6':
+                return 'Military Burpees';
+            case '8':
+                return '2 Pump Burpees';
+            case '10-pump3':
+                return '3 Pump Burpees';
+            case '10':
+                return 'Navy Seal Burpees';
+            default:
+                return 'Burpees';
+        }
     }
 
     updateMinBurpeeTime() {
@@ -361,6 +378,7 @@ class BurpeesCounter {
         }
 
         this.updateDisplay();
+        this.burpeeTypeDisplay.textContent = this.getBurpeeTypeName();
         this.header.classList.add('hidden');
         this.setupSection.classList.add('hidden');
         this.workoutSection.classList.remove('hidden');
@@ -611,11 +629,7 @@ class BurpeesCounter {
 
         // Calculate total time remaining
         const burpeesRemaining = this.totalBurpees - this.currentBurpee;
-        let totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
-        // Subtract prep time since it only happens once
-        if (this.currentBurpee > 1 || this.currentStep > 0) {
-            totalTimeRemaining -= this.prepTime;
-        }
+        const totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
         const minutes = Math.floor(totalTimeRemaining / 60);
         const seconds = Math.floor(totalTimeRemaining % 60);
         this.totalTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;

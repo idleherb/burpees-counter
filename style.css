@@ -200,6 +200,20 @@ button {
     font-variant-numeric: tabular-nums;
     text-align: center;
     min-width: 5ch; /* Reserve space for "99:59" */
+    margin-top: 10px;
+}
+
+.burpee-type {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #667eea;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    background: #f5f5f5;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 8px;
 }
 
 .bottom-grid {
