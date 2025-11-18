@@ -130,9 +130,26 @@ class BurpeesCounter {
         this.updateWorkoutInfo();
     }
 
+    getStepsPerBurpee() {
+        const burpeeType = this.burpeeTypeSelect.value;
+        if (burpeeType === '10-pump3') {
+            return 10;
+        }
+        return parseInt(burpeeType);
+    }
+
     updateMinBurpeeTime() {
-        const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
-        const minTime = stepsPerBurpee === 6 ? 3 : 5; // 3s for military, 5s for navy seal
+        const burpeeType = this.burpeeTypeSelect.value;
+        let minTime;
+
+        if (burpeeType === '6') {
+            minTime = 3; // Military
+        } else if (burpeeType === '8') {
+            minTime = 4; // 2 Pump
+        } else {
+            minTime = 5; // 3 Pump and Navy Seal
+        }
+
         this.timePerBurpeeInput.min = minTime;
 
         // Clear value if it's below the new minimum
@@ -146,7 +163,7 @@ class BurpeesCounter {
         const durationMinutes = parseInt(this.durationInput.value) || 0;
         const burpees = parseInt(this.burpeesInput.value) || 0;
         const customTimePerBurpee = parseFloat(this.timePerBurpeeInput.value) || 0;
-        const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
+        const stepsPerBurpee = this.getStepsPerBurpee();
 
         if (durationMinutes <= 0 || burpees <= 0) {
             this.workoutInfo.classList.add('hidden');
@@ -249,7 +266,7 @@ class BurpeesCounter {
     startWorkout() {
         const durationMinutes = parseInt(this.durationInput.value);
         const burpees = parseInt(this.burpeesInput.value);
-        const stepsPerBurpee = parseInt(this.burpeeTypeSelect.value);
+        const stepsPerBurpee = this.getStepsPerBurpee();
         const customTimePerBurpee = parseFloat(this.timePerBurpeeInput.value) || 0;
         const preTimerSeconds = parseInt(this.preTimerInput.value);
 
@@ -260,7 +277,15 @@ class BurpeesCounter {
 
         // Validate custom time per burpee if specified
         if (customTimePerBurpee > 0) {
-            const minTime = stepsPerBurpee === 6 ? 3 : 5;
+            const burpeeType = this.burpeeTypeSelect.value;
+            let minTime;
+            if (burpeeType === '6') {
+                minTime = 3;
+            } else if (burpeeType === '8') {
+                minTime = 4;
+            } else {
+                minTime = 5;
+            }
             if (customTimePerBurpee < minTime) {
                 alert(`Time per burpee must be at least ${minTime} seconds for this burpee type`);
                 return;
@@ -465,12 +490,22 @@ class BurpeesCounter {
 
     getImageStepForCurrentStep() {
         // Map current step to image step
-        if (this.stepsPerBurpee === 6) {
-            // Map 6 military burpee steps to 10 navy seal steps (skip 4-7)
+        const burpeeType = this.burpeeTypeSelect.value;
+
+        if (burpeeType === '6') {
+            // Military (1 Pump): 0, 1, 2, 3→8, 9, 10
             const stepMapping = [0, 1, 2, 3, 8, 9, 10];
             return stepMapping[this.currentStep] || 0;
+        } else if (burpeeType === '8') {
+            // 2 Pump: 0, 1, 2, 3→8, 3→8, 9, 10
+            const stepMapping = [0, 1, 2, 3, 8, 3, 8, 9, 10];
+            return stepMapping[this.currentStep] || 0;
+        } else if (burpeeType === '10-pump3') {
+            // 3 Pump: 0, 1, 2, 3→8, 3→8, 3→8, 9, 10
+            const stepMapping = [0, 1, 2, 3, 8, 3, 8, 3, 8, 9, 10];
+            return stepMapping[this.currentStep] || 0;
         } else {
-            // Direct mapping for 10-step burpees
+            // Navy Seal: Direct mapping for 10-step burpees (uses all images 0-10)
             return this.currentStep;
         }
     }
