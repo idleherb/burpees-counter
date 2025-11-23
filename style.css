@@ -177,11 +177,11 @@ button {
     color: #bbb;
     line-height: 1;
     text-align: center;
-    min-width: 9.5ch; /* Reserve space for "100/100" */
+    letter-spacing: 0.1em;
 }
 
 .progress .separator {
-    margin: 0 5px;
+    margin: 0;
     font-weight: 400;
 }
 
@@ -273,6 +273,7 @@ button {
     min-width: 5ch; /* Reserve space for "10/10" */
     display: inline-block;
     text-align: center;
+    letter-spacing: 0.1em;
 }
 
 #currentStep .step-current {
@@ -422,3 +423,25 @@ button {
     transform: translateY(-2px);
 }
 
+/* Mobile optimizations for 360px width */
+@media (max-width: 400px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .progress {
+        font-size: 3.5rem;
+    }
+
+    #currentStep {
+        font-size: 3rem;
+    }
+
+    #timePerBurpee {
+        font-size: 3rem;
+    }
+}
