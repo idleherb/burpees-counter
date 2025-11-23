@@ -156,16 +156,7 @@ class BurpeesCounter {
     }
 
     updateMinBurpeeTime() {
-        const burpeeType = this.burpeeTypeSelect.value;
-        let minTime;
-
-        if (burpeeType === '6') {
-            minTime = 3; // Military
-        } else if (burpeeType === '8') {
-            minTime = 4; // 2 Pump
-        } else {
-            minTime = 5; // 3 Pump and Navy Seal
-        }
+        const minTime = 2; // All types: 2 seconds (for testing)
 
         this.timePerBurpeeInput.min = minTime;
 
@@ -294,17 +285,9 @@ class BurpeesCounter {
 
         // Validate custom time per burpee if specified
         if (customTimePerBurpee > 0) {
-            const burpeeType = this.burpeeTypeSelect.value;
-            let minTime;
-            if (burpeeType === '6') {
-                minTime = 3;
-            } else if (burpeeType === '8') {
-                minTime = 4;
-            } else {
-                minTime = 5;
-            }
+            const minTime = 2; // All types: 2 seconds (for testing)
             if (customTimePerBurpee < minTime) {
-                alert(`Time per burpee must be at least ${minTime} seconds for this burpee type`);
+                alert(`Time per burpee must be at least ${minTime} seconds`);
                 return;
             }
 

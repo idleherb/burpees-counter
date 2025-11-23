@@ -177,11 +177,11 @@ button {
     color: #bbb;
     line-height: 1;
     text-align: center;
-    letter-spacing: 0.1em;
 }
 
 .progress .separator {
     margin: 0;
+    padding: 0 0.15em;
     font-weight: 400;
 }
 
