@@ -203,6 +203,10 @@ button {
     margin-top: 10px;
 }
 
+.total-time .time-separator {
+    padding: 0 0.15em;
+}
+
 .burpee-type {
     font-size: 0.7rem;
     font-weight: 600;
@@ -273,7 +277,6 @@ button {
     min-width: 5ch; /* Reserve space for "10/10" */
     display: inline-block;
     text-align: center;
-    letter-spacing: 0.1em;
 }
 
 #currentStep .step-current {
@@ -283,6 +286,7 @@ button {
 #currentStep .step-separator {
     color: #bbb;
     font-weight: 400;
+    padding: 0 0.15em;
 }
 
 #currentStep .step-total {

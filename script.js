@@ -615,7 +615,7 @@ class BurpeesCounter {
         const totalTimeRemaining = this.timeRemaining + (burpeesRemaining * this.timePerBurpee);
         const minutes = Math.floor(totalTimeRemaining / 60);
         const seconds = Math.floor(totalTimeRemaining % 60);
-        this.totalTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        this.totalTimeDisplay.innerHTML = `${minutes}<span class="time-separator">:</span>${seconds.toString().padStart(2, '0')}`;
     }
 
     reset() {
